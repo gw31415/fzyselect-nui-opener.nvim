@@ -1,4 +1,4 @@
-# fzyselect-nui-opener.vim
+# fzyselect-nui-opener.nvim
 
 Use [MunifTanjim/nui.nvim](https://github.com/MunifTanjim/nui.nvim) as the opener of [gw31415/fzyselect.vim](https://github.com/gw31415/fzyselect.vim).
 
