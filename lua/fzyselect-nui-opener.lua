@@ -12,7 +12,7 @@ function _G._fzyselect_nui_opener()
 			}
 		},
 		size = {
-			width = 11,
+			width = '50%',
 			height = 1,
 		},
 		position = '50%',
