@@ -6,14 +6,31 @@ function _G._fzyselect_nui_opener()
 		focusable = true,
 		border = {
 			style = 'rounded',
+			text = {
+				top = 'Loading....',
+				top_align = 'center',
+			}
 		},
 		size = {
-			width = 1,
+			width = 11,
 			height = 1,
 		},
 		position = '50%',
 	}
 	popup:mount()
+	vim.api.nvim_create_autocmd('TextChanged', {
+		buffer = 0,
+		callback = function()
+			popup.border:set_text('top', vim.b.opts.prompt, 'center')
+			popup:update_layout {
+				size = {
+					height = vim.api.nvim_win_get_height(0),
+					width = vim.api.nvim_win_get_width(0),
+				},
+				position = '50%',
+			}
+		end,
+	})
 	popup:on(event.BufLeave, function()
 		popup:unmount()
 	end)
