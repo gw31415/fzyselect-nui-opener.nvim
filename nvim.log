@@ -1,0 +1,2 @@
+WRN 2026-07-02T22:17:16.660 ?.84207    server_start:197: Failed to start server: operation not permitted: /var/folders/7d/dg36hwtn19lfg79dk7ykk9740000gn/T/nvim.ama/mzeXb4/nvim.84207.0
+WRN 2026-07-02T22:17:32.469 ?.84219    server_start:197: Failed to start server: operation not permitted: /var/folders/7d/dg36hwtn19lfg79dk7ykk9740000gn/T/nvim.ama/MlFv2W/nvim.84219.0
