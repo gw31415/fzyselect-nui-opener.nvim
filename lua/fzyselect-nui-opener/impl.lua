@@ -78,6 +78,11 @@ local function make_layout(bufnr, winid, stable_width)
   }
 end
 
+local function initial_width()
+  local columns = vim.o.columns or 80
+  return clamp(math.floor(columns * 0.5), 20, math.max(20, columns - 4))
+end
+
 function M.open()
   local ok_popup, Popup = pcall(require, 'nui.popup')
   local ok_autocmd, autocmd = pcall(require, 'nui.utils.autocmd')
@@ -86,6 +91,7 @@ function M.open()
     return
   end
   local event = autocmd.event
+  local width = initial_width()
 
   local popup = Popup({
     enter = true,
@@ -93,7 +99,7 @@ function M.open()
     relative = 'editor',
     position = '50%',
     size = {
-      width = clamp(math.floor((vim.o.columns or 80) * 0.5), 20, math.max(20, (vim.o.columns or 80) - 4)),
+      width = width,
       height = 1,
     },
     border = {
@@ -115,7 +121,7 @@ function M.open()
   local winid = popup.winid
   local closed = false
   local pending = false
-  local stable_width = nil
+  local stable_width = width
 
   local function close()
     if closed then
