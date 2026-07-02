@@ -51,13 +51,22 @@ local function buffer_prompt(bufnr)
   return 'Loading...'
 end
 
-local function make_layout(bufnr, winid)
+local function make_layout(bufnr, winid, stable_width)
   local max_width, max_height = available_size()
   local min_width = number_global('fzyselect_nui_min_width', 20)
   local padding = number_global('fzyselect_nui_width_padding', 2)
   local win_height = vim.api.nvim_win_is_valid(winid) and vim.api.nvim_win_get_height(winid) or 1
-  local wanted_width = display_width(bufnr, buffer_prompt(bufnr)) + padding
-  local wanted_height = math.max(1, win_height, vim.api.nvim_buf_line_count(bufnr))
+  -- Width must be monotonic while the picker is open.  fzyselect filtering can
+  -- reduce the current candidate set to short lines, but shrinking nui's border
+  -- window leaves stale wide border rows in the border buffer while the inner
+  -- result window is reconfigured.  Grow for newly wider content, but do not
+  -- shrink until this popup is closed.
+  local wanted_width = math.max(stable_width or 0, display_width(bufnr, buffer_prompt(bufnr)) + padding)
+  -- fzyselect.vim intentionally resizes its result window with
+  -- g:fzyselect_maxheight.  Do not expand to the full buffer line count here:
+  -- during command-line filtering that makes the floating content taller than
+  -- fzyselect's own viewport and leaves blank/overlapped rows in the popup.
+  local wanted_height = math.max(1, win_height)
 
   return {
     relative = 'editor',
@@ -106,6 +115,7 @@ function M.open()
   local winid = popup.winid
   local closed = false
   local pending = false
+  local stable_width = nil
 
   local function close()
     if closed then
@@ -136,8 +146,10 @@ function M.open()
       -- border, so clear it after fzyselect has initialized the buffer.
       vim.wo[winid].statusline = ''
     end)
+    local layout = make_layout(bufnr, winid, stable_width)
+    stable_width = layout.size.width
     pcall(function()
-      popup:update_layout(make_layout(bufnr, winid))
+      popup:update_layout(layout)
     end)
   end
 
